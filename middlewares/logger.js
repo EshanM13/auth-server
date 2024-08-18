@@ -18,8 +18,8 @@ try{
 catch(err){
     console.error('Failed to log request:', error);
     };
-next();
-    })
+    });
+    next();
 };
 
 module.exports = logRequest;

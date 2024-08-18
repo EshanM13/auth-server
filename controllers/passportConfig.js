@@ -8,7 +8,7 @@ passport.use(
       {
         clientID: config.Google.GOOGLE_CLIENT_ID,
         clientSecret: config.Google.GOOGLE_CLIENT_SECRET,
-        callbackURL: GOOGLE_CALLBACK_URL,
+        callbackURL: config.Google.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
       },
       (accessToken, refreshToken, profile, done) => {
         const user = {

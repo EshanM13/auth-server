@@ -10,11 +10,11 @@ const registerUser = async(req,res)=>{
         if (!email || !password || !username){
             throw new CustomError('Please enter all 3 mandatory values', 400);
         }
-        isUniqueUser(email, username);
+        await isUniqueUser(email, username);
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db('users').insert({username, email, password: hashedPassword });
-    res.status(201).json({ status: 'Success', message: 'User registered successfully' }); 
+    return res.status(201).json({ status: 'Success', message: 'User registered successfully' }); 
     }
     catch(err){
         return res.status(err.statusCode || 500).json({
@@ -30,7 +30,7 @@ const loginUser = async(req,res)=>{
         if(!email || !password){
             throw new CustomError('Please enter email and password to login', 400);
         }  
-        userExists(email);
+        await userExists(email, null);
         isCorrectPassword(password, userExists.password);
         const token = generateToken(userExists);
 
@@ -57,13 +57,20 @@ async function isUniqueUser(email, username){
       }
 }
 
-async function userExists(email){
-    const userExists = await db('users')
+async function userExists(email, userId){
+    if(!id){
+        const userExists = await db('users')
         .where({email}).first();
-
-        if(!userExists){
-            throw new CustomError('Invalid credentials', 400);
-        }
+        return userId;
+    }
+    if(!email){
+        const userExists = await db('users')
+        .where({id: userId}).first();
+        return userId;
+    }
+    if(!userExists){
+        throw new CustomError('Invalid user details', 400);
+    } 
 }
 
 async function isCorrectPassword(reqPassword, userPassword){
@@ -81,5 +88,5 @@ async function generateToken(userDetails) {
 }
 
 module.exports = {
-    registerUser, loginUser
+    registerUser, loginUser, userExists
 };
