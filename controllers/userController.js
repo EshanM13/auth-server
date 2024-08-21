@@ -7,6 +7,7 @@ const editUser = async(req,res)=>{
     try{
         const reqUserId = req.params.userId;
         await userExists(null, reqUserId);
+        await checkValidBody(req.body);
         const opts = req.body;
         const query = getQuery(reqUserId, opts);
         await query;
@@ -78,6 +79,14 @@ async function getQuery(userId, opts){
     else
         return null;
 }
+
+async function checkValidBody(reqBody){
+    if( !(Object.keys(reqBody).length > 0)){
+        throw new CustomError('No data to update', 400);
+    }
+    return ;
+}
+
 
 
 module.exports = {editUser, getAllUsers, getUserDetails};
