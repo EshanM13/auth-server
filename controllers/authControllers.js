@@ -58,15 +58,14 @@ async function isUniqueUser(email, username){
 }
 
 async function userExists(email, userId){
-    if(!id){
-        const userExists = await db('users')
+    let userExists;
+    if(!userId){
+        userExists = await db('users')
         .where({email}).first();
-        return userId;
     }
     if(!email){
-        const userExists = await db('users')
+        userExists = await db('users')
         .where({id: userId}).first();
-        return userId;
     }
     if(!userExists){
         throw new CustomError('Invalid user details', 400);

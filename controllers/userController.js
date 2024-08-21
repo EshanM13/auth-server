@@ -6,7 +6,7 @@ const {userExists} = require('./authControllers');
 const editUser = async(req,res)=>{
     try{
         const reqUserId = req.params.userId;
-        userExists(null, reqUserId);
+        await userExists(null, reqUserId);
         const opts = req.body;
         const query = getQuery(reqUserId, opts);
         await query;
