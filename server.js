@@ -12,7 +12,7 @@ const PORT = config.PORT || 3003;
 app.use(logRequest);
 app.use(passport.initialize());
 app.use(express.json());
-app.use('/v1/auth', authRoutes);
+app.use('/auth', authRoutes);
 app.use('/v1/user', userRoutes);
 
 app.all('/*', (req,res)=>{

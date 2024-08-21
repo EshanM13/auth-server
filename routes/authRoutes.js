@@ -6,10 +6,12 @@ const passport = require('../controllers/passportConfig');
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
-router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/failure' }),
+router.get('/google', passport.authenticate('google', {scope: ['profile', 'email']}));
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/auth/failure' }),
     (req, res) => {
-      res.redirect(`/?token=${req.user}`);
+      return res.json({
+        token: req.user
+      })
     }
   );
   router.get('/failure', (req,res)=>{

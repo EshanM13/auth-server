@@ -7,7 +7,6 @@ function sanitizeRequestBody(reqBody){
 
 const logRequest = async(req,res,next) =>{
     const startTime = Date.now();
-    console.log(req.query)
 
     res.on('finish', async()=>{
         const duration = Date.now() - startTime;
@@ -23,7 +22,7 @@ try{
     await db('api_logs').insert(logEntry);
     }
 catch(err){
-    console.error('Failed to log request:', error);
+    console.error('Failed to log request:', err);
     };
     });
     next();

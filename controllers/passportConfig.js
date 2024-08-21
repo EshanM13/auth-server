@@ -8,7 +8,7 @@ passport.use(
       {
         clientID: config.Google.GOOGLE_CLIENT_ID,
         clientSecret: config.Google.GOOGLE_CLIENT_SECRET,
-        callbackURL: config.Google.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
+        callbackURL: config.Google.GOOGLE_CALLBACK_URL || `http://localhost:${config.PORT}/auth/google/callback`,
       },
       (accessToken, refreshToken, profile, done) => {
         const user = {
@@ -16,7 +16,7 @@ passport.use(
           email: profile.emails[0].value,
           name: profile.displayName,
         };
-          const token = jwt.sign(user, JWT_SECRET, { expiresIn: '1h' });
+          const token = jwt.sign(user, config.SECRET_TOKEN_KEY, { expiresIn: '1h' });
           done(null, token);
       }
     )
