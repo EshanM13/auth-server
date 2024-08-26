@@ -13,7 +13,6 @@ const editUser = async(req,res)=>{
         await query;
         const updatedUser = await db('users')
             .where({id: reqUserId}).first();
-
         return res.status(200).json({
             status: 'Success',
             message: 'User updated successfully',
@@ -21,11 +20,7 @@ const editUser = async(req,res)=>{
         })
     }
     catch(err){
-        return res.status(err.statusCode || 500).json({
-            status: 'Failed', 
-
-            message: err.message || 'Internal Server Error'
-        })
+        next(err);
     }
 }
 
@@ -38,10 +33,7 @@ const getAllUsers = async(req,res)=>{
         })
     }
     catch(err){
-        return res.status(err.statusCode || 500).json({
-            status: 'Failed', 
-            message: err.message || 'Internal Server Error'
-        })
+        next(err);
     }
 }
 
@@ -57,10 +49,7 @@ const getUserDetails = async(req,res)=>{
         })
     }
     catch(err){
-        return res.status(err.statusCode || 500).json({
-            status: 'Failed', 
-            message: err.message || 'Internal Server Error'
-        })
+        next(err);
     }
 }
 

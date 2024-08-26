@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config.json');
 
-const registerUser = async(req,res)=>{
+const registerUser = async(req,res, next)=>{
     try{
         const {email, password, username} = req.body;
         if (!email || !password || !username){
@@ -17,31 +17,25 @@ const registerUser = async(req,res)=>{
     return res.status(201).json({ status: 'Success', message: 'User registered successfully' }); 
     }
     catch(err){
-        return res.status(err.statusCode || 500).json({
-            status: 'Failed',
-            message: err.message || 'Internal Server Error'
-        });
+        next(err);
     }
 };
 
-const loginUser = async(req,res)=>{
+const loginUser = async(req,res, next)=>{
     try{
         const {email, password} = req.body;
         if(!email || !password){
             throw new CustomError('Please enter email and password to login', 400);
         }  
-        await userExists(email, null);
-        isCorrectPassword(password, userExists.password);
-        const token = generateToken(userExists);
-
+        const existingUser = await userExists(email, null);
+        await isCorrectPassword(password, existingUser.password);
+        const token = await generateToken(existingUser);
         return res.status(200).json({ status: 'Success', message: 'User authenticated',
             token: token
         })
     }
     catch(err){
-        return res.status(err.statusCode || 500).json({ status: 'Failed', 
-            message: err.message || 'Internal server error'
-        })
+        next(err);
     }
 };
 
@@ -70,6 +64,7 @@ async function userExists(email, userId){
     if(!userExists){
         throw new CustomError('Invalid user details', 400);
     } 
+    return userExists;
 }
 
 async function isCorrectPassword(reqPassword, userPassword){
@@ -79,8 +74,8 @@ async function isCorrectPassword(reqPassword, userPassword){
         }
 }
 
-async function generateToken(userDetails) {
-    return jwt.sign({id: userDetails.id, email: userDetails.email}, 
+async function generateToken(existingUser) {
+    return jwt.sign({id: existingUser.id, email: existingUser.email}, 
         config.SECRET_TOKEN_KEY, 
         {expiresIn: '1h'}
     )
